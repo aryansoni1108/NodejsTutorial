@@ -1,18 +1,21 @@
-//using pipe
-const fs = require('fs');
-const zlib = require('zlib');
-const gzip = zlib.createGzip();
-const gunzip = zlib.createGunzip();
-const readStream = fs.createReadStream('./example2.txt.gz');
-const WriteStream = fs.createWriteStream('./uncompressed.txt','utf8');
-readStream.on('data',(chunk)=>{
-    WriteStream.write(chunk)
+//simple http code
+// const http = require('http');
+// const server =http.createServer((req,res)=>{
+//     if(req.url==='/'){
+//         res.write('Hello world from nodejs');
+//         res.end();
+//     }else{
+//         res.write('using some other domain');
+//         res.end();
+//     }
+// })
+// server.listen('3000');
+
+//simple http file
+const http = require('http');
+const fs  = require('fs');
+http.createServer((req,res)=>{
+    const readStream = fs.createReadStream('./static/index.html')
+    res.writeHead(200,{'Content-type':'text/html'});//for json content type is application/json
+    readStream.pipe(res);
 })
-//for compressing files
-readStream.pipe(gzip).pipe(WriteStream);
-
-//using pipe chaining
-readStream.pipe(WriteStream);
-
-//de compress file
-readStream.pipe(gunzip).pipe(WriteStream);
